@@ -1,5 +1,5 @@
 <?php 
-	    $user_name = get_post_meta( get_the_ID(), 'name', true);
+	    $username = get_post_meta( get_the_ID(), 'name', true);
 ?>
 <head>
 
