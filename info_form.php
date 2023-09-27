@@ -2,7 +2,7 @@
     info_form ver1.0
     initial
     upload image
-    add icon pencil hidden form
+    add hidden button
 -->
 
 <?php 
@@ -29,14 +29,13 @@
 
     <div class="form__avatar">
 		<image src= "https://arlink.arleta.my/wp-content/uploads/2023/09/user.png" 	class="username"></image></div>
-			<div class="edit-form-container">
-    <button id="edit-button">
+			<div class="form__title">Fill the form</div>
+            <div class="form__subtitle">Information</div><div class="edit-form-container">
+    <button id="edit-button"> 
         <i class="fas fa-pencil-alt"></i> 
     </button>
     <form id="hidden-form" style="display: none;">
-		  <div class="form__title">Fill the form</div>
-
-    <div class="form__subtitle">Information</div>
+   
        <div class="form__wrapper" >
         <input type="text" placeholder="Name" id="name_textbox"><br>
         <input type="text" placeholder="Occupation" id="occupation_textbox"><br>
@@ -58,14 +57,15 @@
 			<button type="button" onclick="closePopup()">OK</button>
 		</div>
 	
+		
+			
+		</div></form>
+    </form>
+</div><br>
 		<div style="display: flex;">
 			<a class="form__btn form__btn-solid" href="https://chat.openai.com/">chatGpt</a>
             <a class="form__btn form__btn-solid" href="https://wa.link/l0wpiw">Whatsapp</a>
 		</div><br>
-			
-		</div></form>
-    </form>
-</div>
 	</div>
 </div><br><br>
 
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', function() {
 }*/
 
 .form__title {
-  margin-top: 60px;
+  /*margin-top: 60px;*/
   font-weight: 500;
   font-size: 18px;
   color: var(--main-color);
