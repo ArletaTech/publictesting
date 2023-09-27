@@ -1,89 +1,12 @@
 <!--
     info_form ver1.0
     initial
-    upload image form
+    upload image
+    add icon pencil hidden form
 -->
 
 <?php 
   $user_name = get_post_meta( get_the_ID(), 'name', true);
-
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["image"])) {
-    $targetDirectory = "uploads/"; // Create a directory called "uploads" in the same directory as this script
-    $targetFile = $targetDirectory . basename($_FILES["image"]["name"]);
-    $uploadOk = true;
-
-    // Check if the file is an image
-    $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
-    if (!in_array($imageFileType, ['jpg', 'jpeg', 'png', 'gif'])) {
-        echo "Sorry, only JPG, JPEG, PNG, and GIF files are allowed.";
-        $uploadOk = false;
-    }
-
-    // Check if the file already exists
-    if (file_exists($targetFile)) {
-        echo "Sorry, the file already exists.";
-        $uploadOk = false;
-    }
-
-    // Check file size (optional)
-    if ($_FILES["image"]["size"] > 500000) {
-        echo "Sorry, your file is too large.";
-        $uploadOk = false;
-    }
-
-    if ($uploadOk) {
-        // Upload the file
-        if (move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile)) {
-            echo "The file " . basename($_FILES["image"]["name"]) . " has been uploaded.";
-
-            // Check the file type and resize accordingly
-            if (in_array($imageFileType, ['jpg', 'jpeg'])) {
-                resizeJPGImage($targetFile, 1024, 1024, 60);
-            } elseif ($imageFileType === 'png') {
-                resizePNGImage($targetFile, 512, 512);
-            }
-        } else {
-            echo "Sorry, there was an error uploading your file.";
-        }
-    }
-} else {
-    echo "Invalid request.";
-}
-
-function resizeJPGImage($filename, $max_width, $max_height, $quality) {
-    list($orig_width, $orig_height) = getimagesize($filename);
-    $ratio = min($max_width / $orig_width, $max_height / $orig_height);
-
-    $new_width = $orig_width * $ratio;
-    $new_height = $orig_height * $ratio;
-
-    $image_p = imagecreatetruecolor($new_width, $new_height);
-    $image = imagecreatefromjpeg($filename);
-
-    imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
-
-    imagejpeg($image_p, $filename, $quality);
-    imagedestroy($image_p);
-}
-
-function resizePNGImage($filename, $max_width, $max_height) {
-    list($orig_width, $orig_height) = getimagesize($filename);
-    $ratio = min($max_width / $orig_width, $max_height / $orig_height);
-
-    $new_width = $orig_width * $ratio;
-    $new_height = $orig_height * $ratio;
-
-    $image_p = imagecreatetruecolor($new_width, $new_height);
-    $image = imagecreatefrompng($filename);
-
-    imagealphablending($image_p, false);
-    imagesavealpha($image_p, true);
-    imagecopyresampled($image_p, $image, 0, 0, 0, 0, $new_width, $new_height, $orig_width, $orig_height);
-
-    imagepng($image_p, $filename);
-    imagedestroy($image_p);
-}
-
 
 ?>
 <!DOCTYPE html>
@@ -92,6 +15,7 @@ function resizePNGImage($filename, $max_width, $max_height) {
 	<meta name="info form" content="width=device-width, initial-scale=1">
 	<title>info form</title>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
 </head>	
 	</head>
@@ -99,29 +23,32 @@ function resizePNGImage($filename, $max_width, $max_height) {
 <div class="form">
     <div style="width:100%;">
 		<image src= "https://arlink.arleta.my/wp-content/uploads/2023/09/background-1-150x150.jpg" class="background">	</image>
+		
+
 	</div>
 
     <div class="form__avatar">
-	<image src= "https://arlink.arleta.my/wp-content/uploads/2023/09/user.png" 	class="username">	
-	</div>
-
-    <div class="form__title">Fill the form</div>
+		<image src= "https://arlink.arleta.my/wp-content/uploads/2023/09/user.png" 	class="username"></image></div>
+			<div class="edit-form-container">
+    <button id="edit-button">
+        <i class="fas fa-pencil-alt"></i> 
+    </button>
+    <form id="hidden-form" style="display: none;">
+		  <div class="form__title">Fill the form</div>
 
     <div class="form__subtitle">Information</div>
-
-    <div class="form__wrapper">
+       <div class="form__wrapper" >
         <input type="text" placeholder="Name" id="name_textbox"><br>
         <input type="text" placeholder="Occupation" id="occupation_textbox"><br>
         <textarea required="required" id="shortDesc_textarea"></textarea> 
 		<span>short decription..</span><br>
-        
-        <h2>Upload an Image</h2>
-    <form action="upload.php" method="post" enctype="multipart/form-data">
-        <label for="image">Select an image:</label>
-        <input type="file" name="image" id="image" accept="image/*">
+		
+		<form action="upload.php" method="post" enctype="multipart/form-data">
+        <label for="image">Select an image:</label><br>
+        <input type="file" name="image" id="image" accept="image/*"><br>
         <input type="submit" value="Upload Image">
     </form>
-
+ </form>
 		<div>
 			<button type="button" onclick="setData()" class="form__btn">Save</button>
 		</div>
@@ -130,14 +57,17 @@ function resizePNGImage($filename, $max_width, $max_height) {
 			<p>Your data successfully saved!</p>
 			<button type="button" onclick="closePopup()">OK</button>
 		</div>
-
-		
-        <div style="display:flex;">
+	
+		<div style="display: flex;">
 			<a class="form__btn form__btn-solid" href="https://chat.openai.com/">chatGpt</a>
             <a class="form__btn form__btn-solid" href="https://wa.link/l0wpiw">Whatsapp</a>
-		</div>
-    </div>
+		</div><br>
+			
+		</div></form>
+    </form>
 </div>
+	</div>
+</div><br><br>
 
 <script>
 		let popup = document.getElementById("popup");
@@ -178,7 +108,33 @@ function setData() {
     }
   });
 }
+    const fileInput = document.querySelector('input[type="file"]');
+    fileInput.addEventListener('change', function () {
+        const file = fileInput.files[0];
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+        if (!allowedTypes.includes(file.type)) {
+            alert('Please select a valid image file (JPEG, PNG, or GIF).');
+            fileInput.value = ''; // Clear the file input
+        }
+    });
+	
+document.addEventListener('DOMContentLoaded', function() {
+    const editButton = document.getElementById('edit-button');
+    const hiddenForm = document.getElementById('hidden-form');
+
+    editButton.addEventListener('click', function() {
+        if (hiddenForm.style.display === 'none' || hiddenForm.style.display === '') {
+            hiddenForm.style.display = 'block';
+        } else {
+            hiddenForm.style.display = 'none';
+        }
+    });
+});
+
+
 </script>
+
 <style>
 .form {
   --main-color: #000;
@@ -219,6 +175,10 @@ function setData() {
   top: calc(50% -20px);
 }
 
+/*.form__avatar svg {
+  width: 100px;
+  height: 100px;
+}*/
 
 .form__title {
   margin-top: 60px;
@@ -306,7 +266,35 @@ textarea[required="required"]{
 	text-align:center;
     padding: 8px;
 	text-decoration: none;
-	margin:10px;
-
+	border-radius: 5%;
+	margin: 10px;
 }
-</style>
+	.edit-form-container {
+    position: relative;
+}
+
+#edit-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #007bff;
+    display: relative;
+    align-items: center;
+}
+
+#edit-button i.fa-pencil {
+    margin-right: 5px;
+}
+
+#hidden-form {
+    display: none;
+    position: relative;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+</style><br><br><br>
